@@ -1,0 +1,26 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "description": "unit test course project",
+  "main": "index.js",
+  "scripts": {
+    "test": "run:test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vagahbond/ToDoList.git"
+  },
+  "author": "QuantumSheep & Vagahbond",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vagahbond/ToDoList/issues"
+  },
+  "homepage": "https://github.com/Vagahbond/ToDoList#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "helmet": "^3.22.0",
+    "mocha": "^7.2.0",
+    "mongodb-memory-server": "^6.6.1"
+  }
+}
