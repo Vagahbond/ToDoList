@@ -28,4 +28,16 @@ export class Item {
 
     return new Item(name, content, creation_date);
   }
+
+  isValid() {
+    if (this.content === null || this.content === undefined) {
+      return false;
+    }
+
+    if (this.content.length > 1000) {
+      return false;
+    }
+
+    return true;
+  }
 }

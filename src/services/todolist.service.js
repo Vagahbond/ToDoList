@@ -1,4 +1,3 @@
-import { Todolist } from '../models/todolist.model'
 import { User } from '../models/user.model'
 import { Item } from '../models/item.model'
 

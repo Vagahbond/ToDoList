@@ -23,7 +23,7 @@ export class Todolist {
    * @param {Item} item 
    */
   canAddItem(item) {
-    if (this.items && this.items.length >= 10) {
+    if (!this.items || !Array.isArray(this.items) || this.items.length >= 10) {
       return null;
     }
 
@@ -31,15 +31,18 @@ export class Todolist {
       return null;
     }
 
-    if (item.content.length > 1000) {
-      return null
+    if (!item.isValid()) {
+      return null;
     }
 
     const last = Math.max(...this.items.map(i => i.creation_date.getTime()));
-    const diff = moment(last).diff(item.creation_date, 'minutes');
 
-    if (diff < 30) {
-      return null;
+    if (last) {
+      const diff = Math.abs(moment(last).diff(item.creation_date, 'minutes'));
+
+      if (diff < 30) {
+        return null;
+      }
     }
 
     return item;

@@ -51,19 +51,27 @@ export class User {
   }
 
   isValid() {
-    if (!this.firstname || !this.lastname) {
+    if (!this.firstname || (typeof this.firstname) !== 'string') {
       return false;
     }
 
-    if (!this.birthdate || moment().diff(this.birthdate, 'years') < 13) {
+    if (!this.lastname || (typeof this.lastname) !== 'string') {
       return false;
     }
 
-    if (this.password.length > 40 || this.password.length < 8) {
+    if (!this.birthdate || !(this.birthdate instanceof Date) || moment().diff(this.birthdate, 'years') < 13) {
       return false;
     }
 
-    if (!validator.isEmail(this.email)) {
+    if (!this.password || (typeof this.password) !== 'string' || this.password.length > 40 || this.password.length < 8) {
+      return false;
+    }
+
+    if (!this.email || (typeof this.email) !== 'string' || !validator.isEmail(this.email)) {
+      return false;
+    }
+
+    if (!this.todolist || !(this.todolist instanceof Todolist)) {
       return false;
     }
 
