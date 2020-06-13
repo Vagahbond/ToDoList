@@ -6,6 +6,24 @@ import { TodolistService } from "../src/services/todolist.service";
 
 import * as assert from "assert";
 import moment from "moment";
+import { Todolist } from "../src/models/todolist.model";
+
+describe('Mocking', () => {
+  it('Todolist.mock() function should not be null', () => {
+    const todolist = Todolist.mock();
+    assert.ok(todolist !== null);
+  });
+
+  it('Todolist.mock() function should not be undefined', () => {
+    const todolist = Todolist.mock();
+    assert.ok(todolist !== undefined);
+  });
+
+  it('Todolist.mock() function should return a Todolist-typed value', () => {
+    const todolist = Todolist.mock();
+    assert.ok(todolist instanceof Todolist);
+  });
+});
 
 describe("Item creation", () => {
   it("should return item if item count is under 10", () => {

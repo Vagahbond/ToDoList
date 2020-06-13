@@ -4,7 +4,22 @@ import faker from 'faker';
 
 import { User } from '../src/models/user.model';
 
-describe('User validity', () => {
+describe('Mocking', () => {
+  it('User.mock() function should not be null', () => {
+    const user = User.mock();
+    assert.ok(user !== null);
+  });
+
+  it('User.mock() function should not be undefined', () => {
+    const user = User.mock();
+    assert.ok(user !== undefined);
+  });
+
+  it('User.mock() function should return a User-typed value', () => {
+    const user = User.mock();
+    assert.ok(user instanceof User);
+  });
+
   it('User.mock() function should return a valid user', () => {
     const user = User.mock();
     assert.ok(user.isValid());

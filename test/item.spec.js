@@ -3,6 +3,28 @@ import { Item } from '../src/models/item.model';
 import assert from 'assert';
 import faker from 'faker';
 
+describe('Mocking', () => {
+  it('Item.mock() function should not be null', () => {
+    const item = Item.mock();
+    assert.ok(item !== null);
+  });
+
+  it('Item.mock() function should not be undefined', () => {
+    const item = Item.mock();
+    assert.ok(item !== undefined);
+  });
+
+  it('Item.mock() function should return a Item-typed value', () => {
+    const item = Item.mock();
+    assert.ok(item instanceof Item);
+  });
+
+  it('Item.mock() function should return a valid item', () => {
+    const item = Item.mock();
+    assert.ok(item.isValid());
+  });
+});
+
 describe("Item validity", () => {
   it("should not be invalid if item's content is null", () => {
     const item = Item.mock();
