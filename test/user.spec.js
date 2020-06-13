@@ -5,7 +5,7 @@ import faker from 'faker';
 import { User } from '../src/models/user.model';
 
 describe('User validity', () => {
-  it('isValid() should return `true`', () => {
+  it('User.mock() function should return a valid user', () => {
     const user = User.mock();
     assert.ok(user.isValid());
   });
