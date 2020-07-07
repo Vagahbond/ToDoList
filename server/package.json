@@ -20,8 +20,10 @@
   "homepage": "https://github.com/Vagahbond/ToDoList#readme",
   "dependencies": {
     "@babel/node": "^7.10.4",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
     "faker": "^4.1.0",
     "helmet": "^3.23.3",
     "mocha": "^7.2.0",
