@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 
-import { List, PageHeader, Button } from 'antd';
+import { List, PageHeader } from 'antd';
 
 import TodoListItem from './TodoListItem/TodoListItem';
 
