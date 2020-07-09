@@ -6,7 +6,7 @@ export default class About extends React.Component {
     return (
       <React.Fragment>
         <PageHeader
-          title="Login"
+          title="About"
         />
         This site was created by the almighty sheep and the magic bearded man.
       </React.Fragment>

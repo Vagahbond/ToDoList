@@ -6,11 +6,13 @@ import { CloseOutlined } from '@ant-design/icons';
 
 export default class TodoListItem extends React.Component {
   static propTypes = {
-    name: PropTypes.string.isRequired,
+    id: PropTypes.string,
+    content: PropTypes.string,
+    creation_date: PropTypes.string,
   }
 
   state = {
-    name: '',
+    content: PropTypes.string,
     checked: false,
     editing: false,
   }
@@ -18,12 +20,12 @@ export default class TodoListItem extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state.name = props.name;
+    this.state.content = props.content;
     this.state.checked = props.checked;
   }
 
   onDelete = (e) => {
-    console.log("Deleting " + this.props.name);
+    console.log("Deleting " + this.props.content);
   }
 
   /**
@@ -38,9 +40,9 @@ export default class TodoListItem extends React.Component {
   /**
    * @param {React.ChangeEvent<HTMLInputElement>} e 
    */
-  onNameChange = (e) => {
+  onContentChange = (e) => {
     this.setState({
-      name: e.target.value,
+      content: e.target.value,
     });
   }
 
@@ -51,7 +53,6 @@ export default class TodoListItem extends React.Component {
   }
 
   onEditConfirmed = (e) => {
-    console.log(this.props.name)
     this.setState({
       editing: false,
     });
@@ -77,9 +78,9 @@ export default class TodoListItem extends React.Component {
             }}
           >
             <Input
-              placeholder="Todo name"
-              value={this.state.name}
-              onChange={this.onNameChange}
+              placeholder="Todo content"
+              value={this.state.content}
+              onChange={this.onContentChange}
             />
           </Form.Item>
           <Form.Item hidden>
@@ -96,7 +97,7 @@ export default class TodoListItem extends React.Component {
             width: '100%',
           }}
           onClick={this.startEditing}
-        >{this.state.name}</div>
+        >{this.state.content}</div>
         <Button type="link" shape="circle" icon={<CloseOutlined />} size="middle" danger={true} onClick={this.onDelete} />
       </List.Item>
     );

@@ -1,10 +1,16 @@
-import { Item } from './item.model'
+import { Item, schema as ItemSchema } from './item.model'
 
 import moment from 'moment'
 
+import db from '../db';
+
+export const schema = new db.Schema({
+  items: { type: [ItemSchema], default: [] },
+})
+
 export class Todolist {
   /** @type {Item[]}  */
-  items = null;
+  items = [];
 
   /**
    * @param {Item[]} items 
@@ -27,24 +33,35 @@ export class Todolist {
       return null;
     }
 
-    if (this.items.some(i => i.name === item.name)) {
-      return null;
-    }
+    // if (this.items.some(i => i.name === item.name)) {
+    //   return null;
+    // }
 
     if (!item.isValid()) {
       return null;
     }
 
-    const last = Math.max(...this.items.map(i => i.creation_date.getTime()));
+    // const last = Math.max(...this.items.map(i => i.creation_date.getTime()));
 
-    if (last) {
-      const diff = Math.abs(moment(last).diff(item.creation_date, 'minutes'));
+    // if (last) {
+    //   const diff = Math.abs(moment(last).diff(item.creation_date, 'minutes'));
 
-      if (diff < 30) {
-        return null;
-      }
-    }
+    //   if (diff < 30) {
+    //     return null;
+    //   }
+    // }
 
     return item;
+  }
+
+  static fromQuery(data) {
+    if (data) {
+      const todolist = new Todolist(data.items.map(Item.fromQuery));
+      todolist.id = data._id;
+
+      return todolist;
+    }
+
+    return null;
   }
 }

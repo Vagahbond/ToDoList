@@ -2,11 +2,10 @@ import mongoose from 'mongoose'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 
 export const memory_server = new MongoMemoryServer()
-
 export async function connect() {
-  let uri = process.env.MONGO_URL || 'mongodb://localhost:27017/tododo'
+  let uri = process.env.MONGO_URL || 'mongodb://localhost:27017/todolist-ut'
 
-  if (process.env.JEST_WORKER_ID !== undefined) {
+  if (process.env.TEST_RUN !== undefined) {
     uri = await memory_server.getConnectionString(true)
   }
 
@@ -31,6 +30,8 @@ if (process.env.TEST_RUN !== undefined) {
     await mongoose.connection.close()
     await memory_server.stop()
   })
+} else {
+  memory_server.stop()
 }
 
 export default mongoose

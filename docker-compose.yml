@@ -1,0 +1,51 @@
+version: "3"
+services:
+  api:
+    build: ./server
+    container_name: todolist-api
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - private
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/todolist-ut
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    links:
+      - mongo
+  client:
+    build: ./client
+    container_name: todolist-client
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    networks:
+      - private
+    environment:
+      - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    command: npm start
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api
+    links:
+      - api
+  mongo:
+    image: mongo:4.2
+    container_name: todolist-mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - private
+
+volumes:
+  mongo-data:
+
+networks:
+  private:

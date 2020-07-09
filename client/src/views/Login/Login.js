@@ -1,12 +1,27 @@
 import React from 'react';
+import { Link, withRouter } from 'react-router-dom';
 
-import { Input, Row, Col, Button, PageHeader, Form } from 'antd';
-import { Link } from 'react-router-dom';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Input, Row, Col, Button, PageHeader, Form, Alert } from 'antd';
+import { UserOutlined, MailOutlined } from '@ant-design/icons';
 
-export default class Login extends React.Component {
-  onLogin = values => {
-    console.log(values)
+import * as api from '../../utils/api'
+
+class Login extends React.Component {
+  state = {
+    error: null,
+  }
+
+  onLogin = async (values) => {
+    const { data } = await api.request('POST', '/login', values);
+
+    if (data?.error) {
+      this.setState({
+        error: data.error,
+      });
+    } else {
+      api.setToken(data.token);
+      this.props.history.push('/');
+    }
   }
 
   render() {
@@ -17,11 +32,11 @@ export default class Login extends React.Component {
         <Row>
           <Col span={6} offset={9}>
             <Form onFinish={this.onLogin}>
-              <Form.Item name="username" rules={[{ required: true, message: 'Please input your username!' }]}>
-                <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+              <Form.Item name="email" rules={[{ required: true, message: 'Please input your email!' }]}>
+                <Input type="email" prefix={<UserOutlined />} placeholder="Email" />
               </Form.Item>
               <Form.Item name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
-                <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder="Password" />
+                <Input.Password prefix={<MailOutlined />} placeholder="Password" />
               </Form.Item>
               <Form.Item>
                 <Row justify="space-between">
@@ -33,6 +48,14 @@ export default class Login extends React.Component {
                   </Col>
                 </Row>
               </Form.Item>
+              <Form.Item hidden={!this.state.error}>
+                <Alert
+                  message="Error"
+                  description={this.state.error}
+                  type="error"
+                  showIcon
+                />
+              </Form.Item>
             </Form>
           </Col>
         </Row>
@@ -40,3 +63,5 @@ export default class Login extends React.Component {
     )
   }
 }
+
+export default withRouter(Login)

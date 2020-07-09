@@ -1,15 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+
+import * as api from '../../utils/api'
 
 import { List, PageHeader } from 'antd';
 
 import TodoListItem from './TodoListItem/TodoListItem';
 
 export default class TodoList extends React.Component {
-  static propTypes = {
-    todos: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired,
-    })),
+  state = {
+    items: [],
+  }
+
+  async componentDidMount() {
+    const { data } = await api.request('GET', '/todolist');
+    
+    this.setState({
+      items: data.items,
+    });
+
+    console.log(data)
   }
 
   render() {
@@ -22,9 +31,9 @@ export default class TodoList extends React.Component {
         <List
           size="large"
           bordered
-          dataSource={this.props.todos}
+          dataSource={this.state.items}
           renderItem={todo => (
-            <TodoListItem name={todo.name} />
+            <TodoListItem {...todo} />
           )}
         />
       </React.Fragment>

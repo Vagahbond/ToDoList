@@ -1,46 +1,21 @@
 import express from 'express';
 import body_parser from 'body-parser';
 import helmet from 'helmet';
+import cors from 'cors';
+import moment from 'moment';
 
-import { User } from './models/user.model';
-import { Todolist } from './models/todolist.model';
-import { Item } from './models/item.model';
+import { User as UserModel } from './models/user.model';
+import { Todolist as TodolistModel } from './models/todolist.model';
+import { Item as ItemModel } from './models/item.model';
+import { Token as TokenModel } from './models/token.model';
 
-class Database {
-  /** @type {UserModel[]} */
-  users = [];
-  tokens = [];
-
-  /**
-   * @param {string} token 
-   * @returns {User} 
-   */
-  getUser(token) {
-    const t = this.tokens.find(t => t.key == token);
-    return t ? t.user : null;
-  }
-
-  /**
-   * @param {number} id 
-   */
-  createToken(id) {
-    const key = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-    this.tokens.push({
-      key,
-      user: id,
-    });
-
-    return key;
-  }
-}
-
-const db = new Database();
+import { TodolistService } from './services/todolist.service';
 
 const app = express();
 
 app.set('trust proxy', true)
 
+app.use(cors())
 app.use(helmet())
 
 app.use(body_parser.urlencoded({ extended: false }))
@@ -52,81 +27,178 @@ app.get('/', (req, res) => {
   });
 });
 
-app.post('/signup', (req, res) => {
-  
+app.post('/signup', async (req, res) => {
+  const firstname = req.body.firstname;
+  const lastname = req.body.lastname;
+  const email = req.body.email;
+  const birthdate = req.body.birthdate;
+  const password = req.body.password;
+
+  if (await UserModel.findByEmail(email)) {
+    return res.status(400).json({
+      "error": 400,
+      "message": "Email is already taken",
+    })
+  }
+
+  const user = new UserModel(firstname, lastname, moment(birthdate).toDate(), email, password)
+
+  if (!user.isValid()) {
+    return res.status(400).json({
+      "error": 400,
+      "message": "Invalid informations",
+    })
+  }
+
+  await user.create();
+
+  return res.status(201).json({
+    "status": 201,
+    "message": "created",
+    "user": user,
+  })
 });
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
 
-});
+  if (!email || !password) {
+    return res.status(400).json({
+      "error": 400,
+      "message": "Email and password needed",
+    });
+  }
 
-app.get('/todolist', (req, res) => {
-  const token = req.headers.authorization;
-  const user = db.getUser(token);
+  const user = await UserModel.findByEmail(email);
+
+  const dont_match = () => {
+    return res.status(400).json({
+      "error": 400,
+      "message": "The password doesn't match given email address.",
+    });
+  }
 
   if (!user) {
-    res.status(400).json({
-      "error" : 400,
-      "message" : "Bad request",
+    return dont_match();
+  }
+
+  const token = new TokenModel(user.id);
+  await token.save();
+
+  if (password === user.password) {
+    return res.status(201).json({
+      "status": 201,
+      "message": "Signed in",
+      "token": token.key,
+    });
+  }
+
+  return dont_match();
+});
+
+app.get('/todolist', async (req, res) => {
+  const token = req.headers.authorization;
+  const user = await TokenModel.getUser(token);
+
+  if (!user) {
+    return res.status(401).json({
+      "error": 401,
+      "message": "Wrong token",
     })
   }
 
   res.json(user.todolist)
 });
 
-app.post('/todolist', (req, res) => {
+app.post('/todolist', async (req, res) => {
   const token = req.headers.authorization;
-  const user = db.getUser(token);
-
-  if (!user) {
-    res.status(400).json({
-      "error" : 400,
-      "message" : "Bad request",
-    })
-  }
+  const user = await TokenModel.getUser(token);
 
   const content = req.body.content;
-  const name = req.body.name;
-  const creation_date = req.body.ccreationdate
-
-  user.todolist.push(new Item(name, conafterprint, creationdate))
-});
-
-
-app.put('/todolist/:id', (req, res) => {
-  const token = req.headers.authorization;
-  const user = db.getUser(token);
 
   if (!user) {
-    res.status(400).json({
-      "error" : 400,
-      "message" : "Bad request",
+    return res.status(401).json({
+      "error": 401,
+      "message": "Wrong token",
+    })
+  }
+
+  if (!content) {
+    return res.status(400).json({
+      "error": 400,
+      "message": "invalid informations for the token",
+    })
+  }
+
+  TodolistService.addItem(user, new ItemModel(content, new Date()))
+
+  await user.update();
+
+  return res.status(201).json({ content })
+});
+
+app.put('/todolist/:id', async (req, res) => {
+  const token = req.headers.authorization;
+  const user = await TokenModel.getUser(token)
+
+  if (!user) {
+    return res.status(401).json({
+      "error": 401,
+      "message": "Wrong token",
     })
   }
 
   const id = req.body.id;
 
-  const content = req.body.content ?? user.todolist[id].content;
-  const name = req.body.name ?? user.todolist[id].name;
-  const creation_date = req.body.creationdate ?? user.todolist[id].creationdate;
+  const todo = user.todolist.items.find(item => item.id === id);
 
-  user.todolist.push(new Item(name, conafterprint, creationdate))
+  if (!todo) {
+    return res.status(400).json({
+      "error": 400,
+      "message": "todo does not exist",
+    });
+  }
+
+  todo.content = req.body.content ?? todo.content;
+  todo.creation_date = req.body.creationdate ?? todo.creation_date;
+
+
+
+  return res.status(202).json({
+    "error": 202,
+    "message": "Updating todo",
+  });
 });
 
-app.delete('/todolist/:id', (req, res) => {
+app.delete('/todolist/:id', async (req, res) => {
   const token = req.headers.authorization;
-  const user = db.getUser(token);
+  const user = await TokenModel.getUser(token);
 
   if (!user) {
-    res.status(400).json({
-      "error" : 400,
-      "message" : "Bad request",
+    return res.status(401).json({
+      "error": 401,
+      "message": "Wrong token",
     })
   }
 
   const id = req.body.id;
 
-  user.todolist.remove(id);
+  todo = user.todolist.items.find(item => item.id === id);
+
+
+  if (!todo) {
+    return res.status(400).json({
+      "error": 400,
+      "message": "todo does not exist",
+    });
+  }
+
+  user.todolist.remove(todo);
+  return res.status(200).json({
+    "error": 200,
+    "message": "todo deleted",
+  });
 });
 
 /**

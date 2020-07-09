@@ -16,18 +16,29 @@ import Dashboard from './Dashboard/Dashboard';
 import About from './About/About';
 import Signup from './Signup/Signup';
 
+import * as api from '../utils/api'
 
 class App extends React.Component {
   routes = [
-    { name: 'Todolists', to: "/" },
-    { name: 'Signup', to: "/signup" },
-    { name: 'Login', to: "/login" },
-    { name: 'About', to: "/about" },
+    { name: 'Todolists', path: "/", component: Dashboard },
+    { name: 'Signup', path: "/signup", component: Signup, activate: () => !api.token },
+    { name: 'Login', path: "/login", component: Login, activate: () => !api.token },
+    { name: 'About', path: "/about", component: About },
   ]
+
+  shouldShowRoute = i => {
+    const route = this.routes[i];
+
+    if (route.activate) {
+      return route.activate();
+    }
+
+    return true;
+  }
 
   render() {
     const activated_routes = this.routes.reduce((acc, route, i) => {
-      if (route.to === this.props.location.pathname) {
+      if (route.path === this.props.location.pathname) {
         acc.push(i.toString());
       }
 
@@ -39,26 +50,23 @@ class App extends React.Component {
         <Layout.Header>
           <Menu theme="dark" mode="horizontal" selectedKeys={activated_routes}>
             {this.routes.map((route, i) => (
-              <Menu.Item key={i.toString()}>
-                <Link to={route.to}>{route.name}</Link>
+              <Menu.Item key={i.toString()} hidden={!this.shouldShowRoute(i)}>
+                <Link to={route.path}>{route.name}</Link>
               </Menu.Item>
             ))}
           </Menu>
         </Layout.Header>
         <Layout.Content className="layout-content">
           <Switch>
-            <Route exact path="/">
-              <Dashboard />
-            </Route>
-            <Route exact path="/signup">
-              <Signup />
-            </Route>
-            <Route exact path="/login">
-              <Login />
-            </Route>
-            <Route exact path="/about">
-              <About />
-            </Route>
+            {this.routes.map((route, i) => this.shouldShowRoute(i) ? (
+              <Route key={i.toString()} exact path={route.path}>
+                <route.component />
+              </Route>
+            ) : (
+                <React.Fragment key={i.toString()} />
+              )
+            )}
+            <Route>404 page not found.</Route>
           </Switch>
         </Layout.Content>
         <CreateTodo />

@@ -1,12 +1,26 @@
 import React from 'react';
+import { withRouter, Link } from 'react-router-dom';
 
-import { Input, Row, Col, Button, PageHeader, Form } from 'antd';
-import { Link } from 'react-router-dom';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Input, Row, Col, Button, PageHeader, Form, Alert } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, CalendarOutlined } from '@ant-design/icons';
 
-export default class Signup extends React.Component {
-  onSignup = values => {
-    console.log(values)
+import * as api from '../../utils/api'
+
+class Signup extends React.Component {
+  state = {
+    error: null,
+  }
+
+  onSignup = async (values) => {
+    const { data } = await api.request('POST', '/signup', values);
+
+    if (data?.error) {
+      this.setState({
+        error: data.error,
+      });
+    } else {
+      this.props.history.push('/login')
+    }
   }
 
   render() {
@@ -15,12 +29,21 @@ export default class Signup extends React.Component {
         <PageHeader title="Signup" />
         <Row>
           <Col span={6} offset={9}>
-            <Form>
-              <Form.Item name="username" rules={[{ required: true, message: 'Please input your username!' }]}>
-                <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+            <Form onFinish={this.onSignup}>
+              <Form.Item name="firstname" rules={[{ required: true, message: 'Please input your firstname!' }]}>
+                <Input prefix={<UserOutlined />} placeholder="Firstname" />
               </Form.Item>
-              <Form.Item name="password" rules={[{ required: true, message: 'Please input your password!' }]}>
-                <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder="Password" />
+              <Form.Item name="lastname" rules={[{ required: true, message: 'Please input your lastname!' }]}>
+                <Input prefix={<UserOutlined />} placeholder="Lastname" />
+              </Form.Item>
+              <Form.Item name="email" rules={[{ required: true, message: 'Please input your email!' }]}>
+                <Input type="email" prefix={<MailOutlined />} placeholder="Email" />
+              </Form.Item>
+              <Form.Item name="birthdate" rules={[{ required: true, message: 'Please input your birthdate!' }]}>
+                <Input type="date" prefix={<CalendarOutlined />} placeholder="Birthdate" />
+              </Form.Item>
+              <Form.Item name="password" rules={[{ required: true, min: 8, max: 40, message: 'Please input your password!' }]}>
+                <Input.Password prefix={<LockOutlined />} placeholder="Password" />
               </Form.Item>
               <Form.Item>
                 <Row justify="space-between">
@@ -32,6 +55,14 @@ export default class Signup extends React.Component {
                   </Col>
                 </Row>
               </Form.Item>
+              <Form.Item hidden={!this.state.error}>
+                <Alert
+                  message="Error"
+                  description={this.state.error}
+                  type="error"
+                  showIcon
+                />
+              </Form.Item>
             </Form>
           </Col>
         </Row>
@@ -39,3 +70,5 @@ export default class Signup extends React.Component {
     )
   }
 }
+
+export default withRouter(Signup);

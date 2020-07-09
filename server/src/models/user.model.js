@@ -2,9 +2,27 @@ import moment from 'moment';
 import validator from 'validator';
 import * as faker from 'faker';
 
-import { Todolist } from './todolist.model'
+import * as ModelEngine from './model_engine'
+
+import { Todolist, schema as TodolistSchema } from './todolist.model'
+
+import db from '../db';
+
+export const schema = new db.Schema({
+  firstname: { type: String, required: true, },
+  lastname: { type: String, required: true, },
+  birthdate: { type: Date, required: true, },
+  email: { type: String, required: true, },
+  password: { type: String, required: true, },
+  todolist: { type: TodolistSchema },
+})
+
+export const model = db.model('User', schema)
 
 export class User {
+  /** @type {string} */
+  id = null
+
   /** @type {string} */
   firstname = null
 
@@ -50,6 +68,53 @@ export class User {
     return new User(firstname, lastname, birthdate, email, password);
   }
 
+  static async findOne(id) {
+    const data = await model.findOne({ _id: id }).lean()
+    return User.fromQuery(data);
+  }
+
+  static async findByEmail(email) {
+    const data = await model.findOne({ email }).lean()
+    return User.fromQuery(data);
+  }
+
+  static fromQuery(data) {
+    if (data) {
+      const user = new User(data.firstname, data.lastname, data.birthdate, data.email, data.password, Todolist.fromQuery(data.todolist));
+      user.id = data._id;
+
+      return user;
+    }
+
+    return null;
+  }
+
+  async create() {
+    const data = await model.create({
+      firstname: this.firstname,
+      lastname: this.lastname,
+      birthdate: this.birthdate,
+      email: this.email,
+      password: this.password,
+      todolist: this.todolist,
+    });
+
+    this.id = data._id
+
+    return data;
+  }
+
+  update() {
+    return model.updateOne({ _id: this.id }, {
+      firstname: this.firstname,
+      lastname: this.lastname,
+      birthdate: this.birthdate,
+      email: this.email,
+      password: this.password,
+      todolist: this.todolist,
+    });
+  }
+
   isValid() {
     if (!this.firstname || (typeof this.firstname) !== 'string') {
       return false;
@@ -58,6 +123,8 @@ export class User {
     if (!this.lastname || (typeof this.lastname) !== 'string') {
       return false;
     }
+
+    console.log(this)
 
     if (!this.birthdate || !(this.birthdate instanceof Date) || moment().diff(this.birthdate, 'years') < 13) {
       return false;

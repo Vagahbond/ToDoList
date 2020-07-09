@@ -1,8 +1,10 @@
 import React from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Modal, Button, Space, Input } from 'antd';
+import { Modal, Button, Space, Input, Popover } from 'antd';
 
 import './CreateTodo.css';
+
+import * as api from '../../utils/api';
 
 export default class CreateTodo extends React.Component {
   state = {
@@ -20,6 +22,7 @@ export default class CreateTodo extends React.Component {
     this.setState({
       visible: false,
     });
+
     this.createTodo();
   };
 
@@ -29,9 +32,22 @@ export default class CreateTodo extends React.Component {
     });
   };
 
-  createTodo = () => {
-
+  createTodo = async () => {
     console.log(this.state.content)
+
+    const values = {
+      content: this.state.content,
+    }
+
+    const { data } = await api.request('POST', '/todolist', values);
+
+    if (data?.error) {
+      this.setState({
+        error: data.error,
+      });
+    } else {
+      console.log("Created todo!")
+    }
   }
 
   /**
@@ -43,10 +59,22 @@ export default class CreateTodo extends React.Component {
     });
   }
 
+
+  
+
+
   render() {
+    const content = (
+      <div>
+        <p>Create a new Todo Item</p>
+      </div>
+    );
+
     return (
       <div >
-        <Button type="primary" className="FAB" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.showModal} />
+        <Popover content={content} title="Create" trigger="hover">
+          <Button type="primary" className="FAB" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.showModal} />
+        </Popover>
         <Modal
           title="Create Todo : "
           visible={this.state.visible}
