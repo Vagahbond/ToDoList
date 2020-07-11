@@ -48,6 +48,8 @@ export default class CreateTodo extends React.Component {
     } else {
       console.log("Created todo!")
     }
+
+    window.location.reload(false);
   }
 
   /**
@@ -58,11 +60,7 @@ export default class CreateTodo extends React.Component {
       content: e.target.value,
     });
   }
-
-
   
-
-
   render() {
     const content = (
       <div>

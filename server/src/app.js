@@ -148,10 +148,11 @@ app.put('/todolist/:id', async (req, res) => {
       "message": "Wrong token",
     })
   }
+  const id = req.params.id;
 
-  const id = req.body.id;
-
-  const todo = user.todolist.items.find(item => item.id === id);
+  
+  const todo = user.todolist.items.find(item => item.id == id);
+  
 
   if (!todo) {
     return res.status(400).json({
@@ -184,7 +185,7 @@ app.delete('/todolist/:id', async (req, res) => {
 
   const id = req.body.id;
 
-  todo = user.todolist.items.find(item => item.id === id);
+  todo = user.todolist.items.find(item => item.id == id);
 
 
   if (!todo) {

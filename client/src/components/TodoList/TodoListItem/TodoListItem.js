@@ -4,11 +4,14 @@ import PropTypes from 'prop-types';
 import { List, Input, Checkbox, Button, Form } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
+import * as api from '../../../utils/api';
+
 export default class TodoListItem extends React.Component {
   static propTypes = {
     id: PropTypes.string,
     content: PropTypes.string,
     creation_date: PropTypes.string,
+    checked: PropTypes.bool,
   }
 
   state = {
@@ -26,6 +29,7 @@ export default class TodoListItem extends React.Component {
 
   onDelete = (e) => {
     console.log("Deleting " + this.props.content);
+    this.deleteItem();
   }
 
   /**
@@ -46,16 +50,49 @@ export default class TodoListItem extends React.Component {
     });
   }
 
+
+
   startEditing = (e) => {
     this.setState({
       editing: true,
     });
   }
 
-  onEditConfirmed = (e) => {
+   onEditConfirmed = async (e) => {
     this.setState({
       editing: false,
     });
+    await this.updateItemValue()
+  }
+
+  async deleteItem() {
+
+    const { data } = await api.request('DELETE', `/todolist/${this.props.id}`);
+    
+    if (data?.error) {
+      this.setState({
+        error: data.error,
+      });
+    } else {
+      console.log("Deleted todo!")
+    }
+
+  }
+
+  async updateItemValue() {
+    const values = {
+      content: this.state.content,
+    }
+    const { data } = await api.request('PUT', `/todolist/${this.props.id}`, values);
+    
+    if (data?.error) {
+      this.setState({
+        error: data.error,
+      });
+    } else {
+      console.log("Updated todo!")
+    }
+
   }
 
   render() {

@@ -11,7 +11,7 @@ export default class TodoList extends React.Component {
     items: [],
   }
 
-  async componentDidMount() {
+   async refreshItems() {
     const { data } = await api.request('GET', '/todolist');
     
     this.setState({
@@ -19,6 +19,10 @@ export default class TodoList extends React.Component {
     });
 
     console.log(data)
+  }
+
+  async componentDidMount() {
+    await this.refreshItems()
   }
 
   render() {

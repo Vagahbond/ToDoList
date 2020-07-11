@@ -23,6 +23,9 @@ export class Item {
   /** @type {Date} */
   creation_date = null
 
+  /** @type {Boolean} */
+  checked = null
+
   /**
    * @param {string} content 
    * @param {Date} creation_date 
@@ -31,6 +34,8 @@ export class Item {
     // this.name = name;
     this.content = content;
     this.creation_date = creation_date;
+    this.checked = false;
+    
   }
 
   static mock() {
