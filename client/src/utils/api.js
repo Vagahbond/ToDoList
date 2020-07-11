@@ -11,7 +11,6 @@ export let token = localStorage.getItem('token');
  * @param {import('axios').AxiosRequestConfig} config 
  */
 export function request(method, url, data, request_config = {}) {
-  console.log(token);
   const { headers = {}, ...others } = request_config;
 
   return axios({
@@ -32,4 +31,26 @@ export function request(method, url, data, request_config = {}) {
 export function setToken(value) {
   localStorage.setItem('token', value);
   token = value;
+}
+
+export function deleteToken() {
+  token = null;
+  localStorage.removeItem('token');
+}
+
+export async function checkToken() {
+  if (!token) return false;
+
+  try {
+    const { data } = await request('GET', '/connected');
+
+    if (!data?.connected) {
+      deleteToken();
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
 }

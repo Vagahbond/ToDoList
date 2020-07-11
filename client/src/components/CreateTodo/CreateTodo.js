@@ -33,8 +33,6 @@ export default class CreateTodo extends React.Component {
   };
 
   createTodo = async () => {
-    console.log(this.state.content)
-
     const values = {
       content: this.state.content,
     }

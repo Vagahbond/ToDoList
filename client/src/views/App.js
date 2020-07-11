@@ -20,11 +20,15 @@ import * as api from '../utils/api'
 
 class App extends React.Component {
   routes = [
-    { name: 'Todolists', path: "/", component: Dashboard },
+    { name: 'Todolists', path: "/", component: Dashboard, activate: () => !!api.token },
     { name: 'Signup', path: "/signup", component: Signup, activate: () => !api.token },
     { name: 'Login', path: "/login", component: Login, activate: () => !api.token },
     { name: 'About', path: "/about", component: About },
   ]
+
+  async componentDidMount() {
+    await api.checkToken();
+  }
 
   shouldShowRoute = i => {
     const route = this.routes[i];
@@ -58,15 +62,18 @@ class App extends React.Component {
         </Layout.Header>
         <Layout.Content className="layout-content">
           <Switch>
-            {this.routes.map((route, i) => this.shouldShowRoute(i) ? (
+            {this.routes.map((route, i) => (
               <Route key={i.toString()} exact path={route.path}>
-                <route.component />
+                {this.shouldShowRoute(i) ? (
+                  <route.component />
+                ) : (
+                    <React.Fragment>404 page not found.</React.Fragment>
+                  )}
               </Route>
-            ) : (
-                <React.Fragment key={i.toString()} />
-              )
-            )}
-            <Route>404 page not found.</Route>
+            ))}
+            <Route>
+              <React.Fragment>404 page not found.</React.Fragment>
+            </Route>
           </Switch>
         </Layout.Content>
         <CreateTodo />

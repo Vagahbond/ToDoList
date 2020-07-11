@@ -11,14 +11,26 @@ export default class TodoList extends React.Component {
     items: [],
   }
 
-  refreshItems = async() => {
-    const { data } = await api.request('GET', '/todolist');
-    
-    this.setState({
-      items: data.items,
-    });
+  refreshItems = async () => {
+    try {
+      const { data } = await api.request('GET', '/todolist');
 
-    console.log(data)
+      console.log(data)
+
+      /**
+       * `this.state.items` needs to be emptied before reassigned because of... reasons.
+       */
+      this.state.items = [];
+      this.forceUpdate(() => {
+        this.setState({
+          items: data.items
+        });
+      });
+    } catch ({ response: { data } }) {
+      this.setState({
+        error: data.error,
+      });
+    }
   }
 
   async componentDidMount() {
@@ -37,8 +49,8 @@ export default class TodoList extends React.Component {
           bordered
           dataSource={this.state.items}
           renderItem={todo => (
-            <TodoListItem {...todo} 
-            refreshCallback={this.refreshItems}/>
+            <TodoListItem {...todo}
+              refreshCallback={this.refreshItems} />
           )}
         />
       </React.Fragment>

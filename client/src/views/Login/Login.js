@@ -12,15 +12,15 @@ class Login extends React.Component {
   }
 
   onLogin = async (values) => {
-    const { data } = await api.request('POST', '/login', values);
+    try {
+      const { data } = await api.request('POST', '/login', values);
 
-    if (data?.error) {
+      api.setToken(data.token);
+      this.props.history.push('/');
+    } catch ({ response: { data } }) {
       this.setState({
         error: data.error,
       });
-    } else {
-      api.setToken(data.token);
-      this.props.history.push('/');
     }
   }
 

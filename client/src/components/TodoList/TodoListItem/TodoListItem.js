@@ -28,12 +28,11 @@ export default class TodoListItem extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props)
+    console.log('PROPS', this.props)
   }
 
   onDelete = async (e) => {
     await this.deleteItem();
-    this.props.refreshCallback()
   }
 
   /**
@@ -42,8 +41,9 @@ export default class TodoListItem extends React.Component {
   onCheckChange = async (e) => {
     this.setState({
       checked: e.target.checked,
+    }, async () => {
+      await this.updateItem();
     });
-    await this.updateItem();
   }
 
   /**
@@ -63,25 +63,25 @@ export default class TodoListItem extends React.Component {
     });
   }
 
-   onEditConfirmed = async (e) => {
+  onEditConfirmed = async (e) => {
     this.setState({
       editing: false,
+    }, async () => {
+      await this.updateItem()
+      this.props.refreshCallback()
     });
-    await this.updateItem()
-    this.props.refreshCallback()
   }
 
   async deleteItem() {
+    try {
+      await api.request('DELETE', `/todolist/${this.props.id}`);
 
-    const { data } = await api.request('DELETE', `/todolist/${this.props.id}`);
-    
-    if (data?.error) {
+      console.log("Deleted todo!")
+      this.props.refreshCallback()
+    } catch ({ response: { data } }) {
       this.setState({
         error: data.error,
       });
-    } else {
-      console.log("Deleted todo!")
-
     }
 
   }
@@ -89,18 +89,19 @@ export default class TodoListItem extends React.Component {
   async updateItem() {
     const values = {
       content: this.state.content,
-      checked: true,
+      checked: this.state.checked,
     }
-    const { data } = await api.request('PUT', `/todolist/${this.props.id}`, values);
-    
-    if (data?.error) {
+
+    try {
+      await api.request('PUT', `/todolist/${this.props.id}`, values);
+
+      console.log("Updated todo!")
+      this.props.refreshCallback()
+    } catch ({ response: { data } }) {
       this.setState({
         error: data.error,
       });
-    } else {
-      console.log("Updated todo!")
     }
-
   }
 
   render() {

@@ -12,14 +12,13 @@ class Signup extends React.Component {
   }
 
   onSignup = async (values) => {
-    const { data } = await api.request('POST', '/signup', values);
-
-    if (data?.error) {
+    try {
+      await api.request('POST', '/signup', values);
+      this.props.history.push('/login');
+    } catch ({ response: { data } }) {
       this.setState({
         error: data.error,
       });
-    } else {
-      this.props.history.push('/login')
     }
   }
 

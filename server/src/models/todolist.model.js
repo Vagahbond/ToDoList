@@ -9,6 +9,9 @@ export const schema = new db.Schema({
 })
 
 export class Todolist {
+  /** @type {string}  */
+  id = null;
+
   /** @type {Item[]}  */
   items = [];
 
@@ -17,6 +20,13 @@ export class Todolist {
    */
   constructor(items = []) {
     this.items = items
+  }
+
+  db_format() {
+    return {
+      _id: this.id,
+      items: this.items.map(item => item.db_format()),
+    };
   }
 
   static mock() {

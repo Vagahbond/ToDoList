@@ -36,8 +36,7 @@ app.post('/signup', async (req, res) => {
 
   if (await UserModel.findByEmail(email)) {
     return res.status(400).json({
-      "error": 400,
-      "message": "Email is already taken",
+      "error": "Email is already taken",
     })
   }
 
@@ -45,18 +44,26 @@ app.post('/signup', async (req, res) => {
 
   if (!user.isValid()) {
     return res.status(400).json({
-      "error": 400,
-      "message": "Invalid informations",
+      "error": "Invalid informations",
     })
   }
 
   await user.create();
 
   return res.status(201).json({
-    "status": 201,
     "message": "created",
     "user": user,
   })
+});
+
+app.get('/connected', async (req, res) => {
+  const token = req.headers.authorization;
+
+  const user = await TokenModel.getUser(token);
+
+  return res.json({
+    "connected": !!user,
+  });
 });
 
 app.post('/login', async (req, res) => {
@@ -65,19 +72,17 @@ app.post('/login', async (req, res) => {
 
   if (!email || !password) {
     return res.status(400).json({
-      "error": 400,
-      "message": "Email and password needed",
+      "error": "Email and password needed",
+    });
+  }
+
+  const dont_match = () => {
+    return res.status(400).json({
+      "error": "The password doesn't match given email address.",
     });
   }
 
   const user = await UserModel.findByEmail(email);
-
-  const dont_match = () => {
-    return res.status(400).json({
-      "error": 400,
-      "message": "The password doesn't match given email address.",
-    });
-  }
 
   if (!user) {
     return dont_match();
@@ -88,7 +93,6 @@ app.post('/login', async (req, res) => {
 
   if (password === user.password) {
     return res.status(201).json({
-      "status": 201,
       "message": "Signed in",
       "token": token.key,
     });
@@ -103,8 +107,7 @@ app.get('/todolist', async (req, res) => {
 
   if (!user) {
     return res.status(401).json({
-      "error": 401,
-      "message": "Wrong token",
+      "error": "Wrong token",
     })
   }
 
@@ -119,15 +122,13 @@ app.post('/todolist', async (req, res) => {
 
   if (!user) {
     return res.status(401).json({
-      "error": 401,
-      "message": "Wrong token",
+      "error": "Wrong token",
     })
   }
 
   if (!content) {
     return res.status(400).json({
-      "error": 400,
-      "message": "invalid informations for the token",
+      "error": "invalid informations for the token",
     })
   }
 
@@ -144,35 +145,26 @@ app.put('/todolist/:id', async (req, res) => {
 
   if (!user) {
     return res.status(401).json({
-      "error": 401,
-      "message": "Wrong token",
+      "error": "Wrong token",
     })
   }
+
   const id = req.params.id;
+  const todo = user.todolist.items.find(item => item.id == id);
 
-  
-  const todo = await user.todolist.items.find(item => item.id == id);
-
-  console.log( " id :" + id)
   if (!todo) {
     return res.status(400).json({
-      "error": 400,
-      "message": "todo does not exist",
+      "error": "todo does not exist",
     });
   }
 
   todo.content = req.body.content ?? todo.content;
-  todo.creation_date = req.body.creationdate ?? todo.creation_date;
   todo.checked = req.body.checked ?? todo.checked;
-
 
   await user.update()
 
-
-
   return res.status(202).json({
-    "error": 202,
-    "message": "Updating todo",
+    "error": "Updating todo",
   });
 });
 
@@ -182,27 +174,25 @@ app.delete('/todolist/:id', async (req, res) => {
 
   if (!user) {
     return res.status(401).json({
-      "error": 401,
-      "message": "Wrong token",
+      "error": "Wrong token",
     })
   }
 
-  const id = req.body.id;
+  const id = req.params.id;
+  const index = user.todolist.items.findIndex(item => item.id == id);
 
-  const todo = user.todolist.items.find(item => item.id == id);
-
-
-  if (!todo) {
+  if (index === -1) {
     return res.status(400).json({
-      "error": 400,
-      "message": "todo does not exist",
+      "error": "todo does not exist",
     });
   }
 
-  user.todolist.remove(todo);
+  user.todolist.items.splice(index, 1);
+  await user.update();
+
+  //user.todolist.remove(todo);
   return res.status(200).json({
-    "error": 200,
-    "message": "todo deleted",
+    "error": "todo deleted",
   });
 });
 

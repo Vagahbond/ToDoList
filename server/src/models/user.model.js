@@ -111,7 +111,7 @@ export class User {
       birthdate: this.birthdate,
       email: this.email,
       password: this.password,
-      todolist: this.todolist,
+      todolist: this.todolist.db_format(),
     });
   }
 
