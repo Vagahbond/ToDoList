@@ -35,10 +35,11 @@ export default class TodoListItem extends React.Component {
   /**
    * @param {import('antd/lib/checkbox').CheckboxChangeEvent} e 
    */
-  onCheckChange = (e) => {
+  onCheckChange = async (e) => {
     this.setState({
       checked: e.target.checked,
     });
+    await this.updateItem();
   }
 
   /**
@@ -62,7 +63,7 @@ export default class TodoListItem extends React.Component {
     this.setState({
       editing: false,
     });
-    await this.updateItemValue()
+    await this.updateItem()
   }
 
   async deleteItem() {
@@ -79,10 +80,13 @@ export default class TodoListItem extends React.Component {
 
   }
 
-  async updateItemValue() {
+  async updateItem() {
     const values = {
       content: this.state.content,
+      checked: this.state.checked,
     }
+    console.log(this.props.id)
+    console.log(values)
     const { data } = await api.request('PUT', `/todolist/${this.props.id}`, values);
     
     if (data?.error) {

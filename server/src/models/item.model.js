@@ -42,7 +42,7 @@ export class Item {
     // const name = faker.random.words(Math.random() * (6 - 1) + 1);
     const content = faker.random.alphaNumeric(Math.random() * (1000 - 10) + 10);
     const creation_date = faker.date.past(30);
-
+    
     return new Item(content, creation_date);
   }
 

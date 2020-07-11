@@ -151,7 +151,7 @@ app.put('/todolist/:id', async (req, res) => {
   const id = req.params.id;
 
   
-  const todo = user.todolist.items.find(item => item.id == id);
+  const todo = await user.todolist.items.find(item => item.id == id);
   
 
   if (!todo) {
@@ -163,6 +163,10 @@ app.put('/todolist/:id', async (req, res) => {
 
   todo.content = req.body.content ?? todo.content;
   todo.creation_date = req.body.creationdate ?? todo.creation_date;
+  todo.checked = req.body.checked ?? todo.checked;
+
+
+  await user.update()
 
 
 
