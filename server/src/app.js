@@ -152,8 +152,8 @@ app.put('/todolist/:id', async (req, res) => {
 
   
   const todo = await user.todolist.items.find(item => item.id == id);
-  
 
+  console.log( " id :" + id)
   if (!todo) {
     return res.status(400).json({
       "error": 400,
@@ -189,7 +189,7 @@ app.delete('/todolist/:id', async (req, res) => {
 
   const id = req.body.id;
 
-  todo = user.todolist.items.find(item => item.id == id);
+  const todo = user.todolist.items.find(item => item.id == id);
 
 
   if (!todo) {

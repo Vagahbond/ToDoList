@@ -11,7 +11,7 @@ export default class TodoList extends React.Component {
     items: [],
   }
 
-   async refreshItems() {
+  refreshItems = async() => {
     const { data } = await api.request('GET', '/todolist');
     
     this.setState({
@@ -37,7 +37,8 @@ export default class TodoList extends React.Component {
           bordered
           dataSource={this.state.items}
           renderItem={todo => (
-            <TodoListItem {...todo} />
+            <TodoListItem {...todo} 
+            refreshCallback={this.refreshItems}/>
           )}
         />
       </React.Fragment>

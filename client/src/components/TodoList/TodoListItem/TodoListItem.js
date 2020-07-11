@@ -27,9 +27,13 @@ export default class TodoListItem extends React.Component {
     this.state.checked = props.checked;
   }
 
-  onDelete = (e) => {
-    console.log("Deleting " + this.props.content);
-    this.deleteItem();
+  componentDidMount() {
+    console.log(this.props)
+  }
+
+  onDelete = async (e) => {
+    await this.deleteItem();
+    this.props.refreshCallback()
   }
 
   /**
@@ -64,6 +68,7 @@ export default class TodoListItem extends React.Component {
       editing: false,
     });
     await this.updateItem()
+    this.props.refreshCallback()
   }
 
   async deleteItem() {
@@ -76,6 +81,7 @@ export default class TodoListItem extends React.Component {
       });
     } else {
       console.log("Deleted todo!")
+
     }
 
   }
@@ -83,10 +89,8 @@ export default class TodoListItem extends React.Component {
   async updateItem() {
     const values = {
       content: this.state.content,
-      checked: this.state.checked,
+      checked: true,
     }
-    console.log(this.props.id)
-    console.log(values)
     const { data } = await api.request('PUT', `/todolist/${this.props.id}`, values);
     
     if (data?.error) {

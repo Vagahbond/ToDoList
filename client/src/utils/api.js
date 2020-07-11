@@ -11,6 +11,7 @@ export let token = localStorage.getItem('token');
  * @param {import('axios').AxiosRequestConfig} config 
  */
 export function request(method, url, data, request_config = {}) {
+  console.log(token);
   const { headers = {}, ...others } = request_config;
 
   return axios({
