@@ -50,7 +50,7 @@ class App extends React.Component {
     }, []);
 
     return (
-      <Layout style={{ height: "100vh" }}>
+      <Layout style={{ minHeight: "100vh" }}>
         <Layout.Header>
           <Menu theme="dark" mode="horizontal" selectedKeys={activated_routes}>
             {this.routes.map((route, i) => (

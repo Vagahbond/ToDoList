@@ -83,7 +83,6 @@ export default class TodoListItem extends React.Component {
         error: data.error,
       });
     }
-
   }
 
   async updateItem() {

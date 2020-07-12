@@ -44,7 +44,7 @@ class Login extends React.Component {
                     <Link to="/signup">Create an account.</Link>
                   </Col>
                   <Col>
-                    <Button type="primary" htmlType="submit">Login</Button>
+                    <Button id="LoginSubmit" type="primary" htmlType="submit">Login</Button>
                   </Col>
                 </Row>
               </Form.Item>

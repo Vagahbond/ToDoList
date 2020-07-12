@@ -36,18 +36,21 @@ export default class CreateTodo extends React.Component {
     const values = {
       content: this.state.content,
     }
+    try {
+      const { data } = await api.request('POST', '/todolist', values);
 
-    const { data } = await api.request('POST', '/todolist', values);
+      console.log(data)
+      window.location.reload(false);
 
-    if (data?.error) {
+
+    } catch ({ response: { data } }) {
       this.setState({
         error: data.error,
       });
-    } else {
-      console.log("Created todo!")
     }
 
-    window.location.reload(false);
+
+
   }
 
   /**
@@ -58,7 +61,7 @@ export default class CreateTodo extends React.Component {
       content: e.target.value,
     });
   }
-  
+
   render() {
     const content = (
       <div>
@@ -69,16 +72,19 @@ export default class CreateTodo extends React.Component {
     return (
       <div >
         <Popover content={content} title="Create" trigger="hover">
-          <Button type="primary" className="FAB" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.showModal} />
+          <Button type="primary" className="FAB" shape="circle" icon={<PlusOutlined />} size="large" onClick={this.showModal} id="CreateTodoFAB" />
         </Popover>
         <Modal
           title="Create Todo : "
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          okButtonProps={{
+            id: 'CreateTodoSubmit',
+          }}
         >
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Input.TextArea value={this.state.content} onChange={this.onTextChanged} />
+            <Input.TextArea value={this.state.content} onChange={this.onTextChanged} id="CreateTodoTextArea" />
           </Space>
         </Modal>
       </div>

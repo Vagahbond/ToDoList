@@ -52,6 +52,7 @@ export default class TodoList extends React.Component {
             <TodoListItem {...todo}
               refreshCallback={this.refreshItems} />
           )}
+          id="TodoList"
         />
       </React.Fragment>
     );

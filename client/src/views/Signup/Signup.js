@@ -50,7 +50,7 @@ class Signup extends React.Component {
                     <Link to="/login">Login to an existing account.</Link>
                   </Col>
                   <Col>
-                    <Button type="primary" htmlType="submit">Signup</Button>
+                    <Button id="SignupSubmit" type="primary" htmlType="submit">Signup</Button>
                   </Col>
                 </Row>
               </Form.Item>
