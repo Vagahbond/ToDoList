@@ -2,6 +2,9 @@ name: Tests
 
 on: [push, pull_request]
 
+env:
+  TEST_RUN: 1
+
 jobs:
   unit-tests:
     runs-on: ${{ matrix.os }}
@@ -24,7 +27,7 @@ jobs:
       - run: npm i
         working-directory: ./server
 
-      - run: npm test
+      - run: npm run test-ci
         working-directory: ./server
         env:
           CI: true
