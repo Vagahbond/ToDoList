@@ -30,7 +30,8 @@ const url = 'http://localhost:3001'
 const firstname = faker.name.firstName();
 const lastname = faker.name.lastName();
 const email = faker.internet.email(firstname, lastname);
-const birthdate = faker.date.past(100, moment().subtract({ year: faker.random.number({ min: 14, max: 100 }) }).toDate());
+const raw_birthdate = faker.date.past(100, moment().subtract({ year: faker.random.number({ min: 14, max: 100 }) }).toDate());
+const birthdate = moment(raw_birthdate).format('yyyy-MM-DD');
 const password = faker.internet.password(faker.random.number({ min: 8, max: 40 }));
 
 describe('Signup', () => {
@@ -42,13 +43,14 @@ describe('Signup', () => {
     cy.get('#firstname').type(firstname)
     cy.get('#lastname').type(lastname)
     cy.get('#email').type(email)
-    cy.get('#birthdate').type(moment(birthdate).format('yyyy-MM-DD'))
+    cy.get('#birthdate').type(birthdate)
     cy.get('#password').type(password)
   })
 
   it('should redirect to /login on valid submit', () => {
     cy.get('#SignupSubmit').click()
-    cy.url().should('include', '/login')
+    cy.wait(1000);
+    cy.url().should('eq', `${url}/login`)
   })
 })
 
@@ -85,39 +87,57 @@ describe('Login', () => {
     cy.get("#email").clear().type(email)
     cy.get("#password").clear().type(password)
     cy.get("#LoginSubmit").click()
-    cy.url().should('include', '/')
+    cy.url().should('eq', `${url}/`)
+  })
+})
+
+describe('FAB', () => {
+  it('should visits the todolists', () => {
+    cy.visit(`${url}/`)
   })
 
-  describe('FAB tests', () => {
-    it('should visits the todolists', () => {
-      cy.visit(`${url}/`)
-    })
+  it('should display FAB', () => {
+    cy.get('#CreateTodoFAB')
+  })
 
-    it('should display FAB', () => {
-      cy.get('#CreateTodoFAB')
-    })
+  it('should show modal on click', () => {
+    cy.get('#CreateTodoTextArea').should('not.exist')
+    cy.get('#CreateTodoFAB').click()
+    cy.get('#CreateTodoTextArea')
+  })
 
-    it('should show modal on click', () => {
-      cy.get('#CreateTodoTextArea').should('not.exist')
-      cy.get('#CreateTodoFAB').click()
-      cy.get('#CreateTodoTextArea')
-    })
+  it('should create todo', () => {
+    cy.get('#CreateTodoTextArea').type("hello world")
+    cy.get('#CreateTodoSubmit').click()
 
-    it('should create todo when valid and display it', () => {
-      cy.wait(0).then(() => {
-        const length = document.querySelectorAll('#TodoList li input[type=text]').length;
-        cy.log(length)
-      })
+  })
+})
 
-      cy.get('#CreateTodoTextArea').type("hello world")
-      cy.get('#CreateTodoSubmit').click()
+describe("Todo checkboxes", () => {
+  it("should be saving state after a checkbox has been checked", () => {
+    cy.get("#TodoList input[type='checkbox']").should('not.be.checked')
+    cy.get("#TodoList input[type='checkbox']").first().check()
+    cy.get("#TodoList input[type='checkbox']").should('be.checked')
+    cy.reload()
+    cy.wait(1000)
+    cy.get("#TodoList input[type='checkbox']").should('be.checked')
+    cy.get("#TodoList input[type='checkbox']").first().uncheck()
+    cy.get("#TodoList input[type='checkbox']").should('not.be.checked')
+    cy.reload()
+    cy.wait(1000)
+    cy.get("#TodoList input[type='checkbox']").should('not.be.checked')
+  })
+})
 
-      cy.wait(0).then(() => {
-        const after_length = document.querySelectorAll('#TodoList li input[type=text]').length;
-        cy.log(document.querySelectorAll('#TodoList li input[type=text]'))
+describe("Todo suppression", () => {
+  it('should delete the only present todolist', () => {
+    cy.get("#TodoList button.ant-btn-dangerous").first().click()
+    cy.get("#TodoList button.ant-btn-dangerous").should('not.exist')
+  })
+})
 
-        expect(length).to.equal(after_length)
-      })
-    })
+describe("About", () => {
+  it('should successfully access /about', () => {
+    cy.visit(`${url}/about`)
   })
 })
