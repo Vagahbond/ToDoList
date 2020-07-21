@@ -43,7 +43,8 @@ jobs:
         with:
           submodules: true
 
+      - run: cd ./client
+
       - uses: cypress-io/github-action@v2
         with:
           browser: ${{ matrix.browser }}
-          project: ./client
