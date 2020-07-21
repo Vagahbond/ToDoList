@@ -124,8 +124,6 @@ export class User {
       return false;
     }
 
-    console.log(this)
-
     if (!this.birthdate || !(this.birthdate instanceof Date) || moment().diff(this.birthdate, 'years') < 13) {
       return false;
     }

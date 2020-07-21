@@ -39,28 +39,7 @@ describe("Item creation", () => {
     const item = Item.mock();
     item.creation_date = moment().subtract(31 * 9, 'minute').toDate();
 
-    assert.equal(user.todolist.canAddItem(item), item);
-  });
-
-  it("should be null if name is already taken", () => {
-    const user = User.mock();
-    for (let i = 8; i > 0; i--) {
-      const item = Item.mock();
-      item.creation_date = moment().subtract(31 * i, 'minute').toDate();
-
-      TodolistService.addItem(user, item);
-    }
-
-    const taken_item = Item.mock();
-    taken_item.creation_date = moment().subtract(31 * 9, 'minute').toDate();
-    taken_item.name = "my story";
-    TodolistService.addItem(user, taken_item)
-
-    const item = Item.mock();
-    item.creation_date = moment().subtract(31 * 10, 'minute').toDate();
-    item.name = "my story";
-
-    assert.equal(user.todolist.canAddItem(item), null);
+    assert.notEqual(user.todolist.canAddItem(item), null);
   });
 
   it("should be null if list already contains 10 items", () => {

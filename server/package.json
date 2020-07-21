@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/Vagahbond/ToDoList#readme",
   "dependencies": {
-    "@babel/node": "^7.10.4",
+    "@babel/node": "^7.10.5",
+    "@babel/runtime": "^7.10.5",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
@@ -28,17 +29,19 @@
     "helmet": "^3.23.3",
     "mocha": "^7.2.0",
     "moment": "^2.27.0",
-    "mongoose": "^5.9.22",
+    "mongoose": "^5.9.25",
     "validator": "^13.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.4",
+    "@babel/core": "^7.10.5",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-export-namespace-from": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
-    "@babel/register": "^7.10.4",
+    "@babel/register": "^7.10.5",
     "@types/faker": "^4.1.12",
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
     "mongodb-memory-server": "^6.6.1",
     "nodemon": "^2.0.4"
   }

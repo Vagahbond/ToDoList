@@ -18,14 +18,14 @@ export async function connect() {
 connect()
 
 if (process.env.TEST_RUN !== undefined) {
-  beforeAll(async () => await connect())
+  beforeEach(async () => await connect())
 
   afterEach(async () => {
     const collections = Object.values(mongoose.connection.collections)
     await Promise.all(collections.map(c => c.deleteMany()))
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     await mongoose.connection.dropDatabase()
     await mongoose.connection.close()
     await memory_server.stop()
