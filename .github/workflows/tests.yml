@@ -22,10 +22,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - run: npm i
-        working-directory: ${{runner.workspace}}/server
+        working-directory: ./server
 
       - run: npm test
-        working-directory: ${{runner.workspace}}/server
+        working-directory: ./server
         env:
           CI: true
 
@@ -46,3 +46,4 @@ jobs:
       - uses: cypress-io/github-action@v2
         with:
           browser: ${{ matrix.browser }}
+          project: ./client
