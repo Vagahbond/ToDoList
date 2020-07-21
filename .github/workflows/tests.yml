@@ -28,22 +28,3 @@ jobs:
         working-directory: ./server
         env:
           CI: true
-
-  ui-tests:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: ["windows-latest", "macos-latest", "ubuntu-latest"]
-        node-version: [12.x, 14.x]
-        browser: ["chrome"]
-
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
-
-      - uses: cypress-io/github-action@v2
-        with:
-          project: ./client
-          browser: ${{ matrix.browser }}

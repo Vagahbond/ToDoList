@@ -6,7 +6,7 @@
   "scripts": {
     "start": "babel-node .",
     "dev": "nodemon --exec babel-node .",
-    "test": "TEST_RUN=1 mocha"
+    "test": "TEST_RUN=1 mocha --exit"
   },
   "repository": {
     "type": "git",
