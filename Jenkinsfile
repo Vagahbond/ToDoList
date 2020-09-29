@@ -1,12 +1,12 @@
 pipeline {
-    agent any /* pipeline won't be executed without this line */
+    agent any 
     stages {
-        stage ('Tests') { /*test the server */
+        stage ('Tests') { 
             steps {
-                echo 'Testing...'   /* logs */
-                dir ("server") {    /* browse to workdir */
-                    sh 'npm i'          /* install packages */
-                    sh 'npm run test-ci' /* run tests */
+                echo 'Testing...'   
+                dir ("server") {  
+                    sh 'npm i'          
+                    sh 'npm run test-ci'
                 }
                 
             }
