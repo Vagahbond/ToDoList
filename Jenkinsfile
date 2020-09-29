@@ -1,19 +1,19 @@
 pipeline {
-    agent any
+    agent any /* pipeline won't be executed without this line */
     stages {
-        stage  ('Build') {
+        stage  ('Build') { /* build the server */
             steps {
-               echo 'Building...'
-                sh 'cd server'
-                sh 'npm i'
-                sh 'npm run start'
+               echo 'Building...'   /* logs */
+                sh 'cd server'      /*brows to the user directory */
+                sh 'npm i'          /* install packages */
+                sh 'npm run start'  /* build server */
             }
         }
-        stage ('Tests') {
+        stage ('Tests') { /*test the server */
             steps {
-                echo 'Testing...'
-                sh 'cd server'
-                sh 'npm i'
+                echo 'Testing...'   /* logs */
+                sh 'cd server'      /* brows to the user directory */
+                sh 'npm i'          /* install packages */
                 sh 'npm run test-ci'
             }
         }
