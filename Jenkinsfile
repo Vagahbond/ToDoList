@@ -17,7 +17,7 @@ pipeline {
     
     always {
 
-      discordSend description: 'Jenkins Pipeline Build', footer: 'Footer Text', link: https://discordapp.com/api/webhooks/760536452110745664/KhJMQAqJ6vjJ12mbcX7lslbAW7kCEvBUZR1lxtwjcyeb1IDD4bNt-K-Ew6RrjqIL1Q16, result: currentBuild.currentResult, unstable: false, title: JOB_NAME, webhookURL: 'Webhook URL'
+      discordSend description: 'Jenkins Pipeline Build', footer: 'Footer Text', link: 'https://discordapp.com/api/webhooks/760536452110745664/KhJMQAqJ6vjJ12mbcX7lslbAW7kCEvBUZR1lxtwjcyeb1IDD4bNt-K-Ew6RrjqIL1Q16', result: currentBuild.currentResult, unstable: false, title: JOB_NAME, webhookURL: 'Webhook URL'
     }
 
     success {
