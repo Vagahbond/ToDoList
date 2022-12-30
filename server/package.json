@@ -28,7 +28,7 @@
     "express-jwt": "^6.0.0",
     "faker": "^4.1.0",
     "helmet": "^3.23.3",
-    "mocha": "^7.2.0",
+    "mocha": "^10.2.0",
     "moment": "^2.27.0",
     "mongoose": "^5.9.25",
     "validator": "^13.1.1"
